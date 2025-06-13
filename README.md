@@ -1,1 +1,1 @@
-# 4-in-a-row
+# Gr_2 (tên thành viên, nickname git)
