@@ -1,2 +1,4 @@
 # Gr_2 (tên thành viên, nickname git)
-Nyx: Văn Đình Nam Khánh
+Nyx0806: Văn Đình Nam Khánh
+cusiuthoi: Nguyễn Duy Nghĩa
+nhgkhiem0307: Nguyễn Hoàng Gia Khiêm
