@@ -15,6 +15,16 @@ Scene* GameScene::createScene(GameMode mode) {
 bool GameScene::init() {
     if (!Scene::init()) return false;
 
+    // Lấy kích thuoc man hinh
+    auto size = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+    //Background
+    auto background = Sprite::create("image/Main UI/BG.png");
+    background->setPosition(size / 2);
+    this->addChild(background);
+
+
     // Khởi tạo người chơi
     _player1 = new Player(1, Color3B::GREEN);
     _player2 = (_mode == GameMode::ONE_PLAYER) ? new AIPlayer() : new Player(2, Color3B::ORANGE);

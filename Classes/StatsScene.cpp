@@ -16,7 +16,13 @@ bool StatsScene::init() {
     if (!Scene::init()) return false;
 
     auto size = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
     auto stats = StatsManager::getInstance();
+
+    //Background
+    auto background = Sprite::create("image/Main UI/BG.png");
+    background->setPosition(size / 2);
+    this->addChild(background);
 
     // Thiết kế giao diện Stats
     

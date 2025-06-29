@@ -4,16 +4,10 @@
 #include "ui/CocosGUI.h"
 class UIManager {
 public:
-    // Tạo button cơ bản với tiêu đề và callback
-    static cocos2d::ui::Button* createButton(const std::string& title,
+    // Tạo button cơ bản với ảnh sẵn có và callback
+    static cocos2d::ui::Button* createButton(
         const std::string& normalImage,
-        const std::string& pressedImage,
         const cocos2d::Vec2& position,
-        const std::function<void(cocos2d::Ref*)>& callback);
-
-    // Tạo label
-    static cocos2d::Label* createLabel(const std::string& text, float fontSize, const cocos2d::Vec2& position);
-
-    // Hiện popup thông báo đơn giản
-    static void showPopup(cocos2d::Node* parent, const std::string& message);
+        const std::function<void(cocos2d::Ref*)>& callback,
+        float scale);
 };
