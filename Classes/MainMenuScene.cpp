@@ -40,28 +40,28 @@ bool MainMenuScene::init() {
     float scale = 0.6f;
 
     // ONE PLAYER
-    auto btnOne = UIManager::createButton("image/Main UI/one player button.png",
+    auto btnOne = UIManager::getInstance()->createButton("image/Main UI/one player button.png",
         Vec2(size.width / 2, startY),
         CC_CALLBACK_1(MainMenuScene::goToOnePlayer, this),
         scale);
     this->addChild(btnOne);
 
     // TWO PLAYER
-    auto btnTwo = UIManager::createButton("image/Main UI/two player button.png",
+    auto btnTwo = UIManager::getInstance()->createButton("image/Main UI/two player button.png",
         Vec2(size.width / 2, startY - spacing),
         CC_CALLBACK_1(MainMenuScene::goToTwoPlayer, this),
         scale);
     this->addChild(btnTwo);
 
     // STATS
-    auto btnStats = UIManager::createButton("image/Main UI/stat button.png",
+    auto btnStats = UIManager::getInstance()->createButton("image/Main UI/stat button.png",
         Vec2(size.width / 2, startY - spacing * 2),
         CC_CALLBACK_1(MainMenuScene::goToStats, this),
         scale);
     this->addChild(btnStats);
 
     // OPTIONS
-    auto btnOptions = UIManager::createButton("image/Main UI/option button.png",
+    auto btnOptions = UIManager::getInstance()->createButton("image/Main UI/option button.png",
         Vec2(size.width / 2, startY - spacing * 3),
         CC_CALLBACK_1(MainMenuScene::goToOptions, this),
         scale);
@@ -72,17 +72,22 @@ bool MainMenuScene::init() {
 }
 
 void MainMenuScene::goToOnePlayer(cocos2d::Ref* sender) {
-    Director::getInstance()->replaceScene(GameScene::createScene(GameMode::ONE_PLAYER));
+	// Chuyển đến GameScene với chế độ chơi một người
+	UIManager::getInstance()->changeScene(
+        GameScene::createScene(GameMode::ONE_PLAYER)
+    );
 }
 
 void MainMenuScene::goToTwoPlayer(cocos2d::Ref* sender) {
-    Director::getInstance()->replaceScene(GameScene::createScene(GameMode::TWO_PLAYER));
+    UIManager::getInstance()->changeScene(
+        GameScene::createScene(GameMode::TWO_PLAYER)
+    );
 }
 
 void MainMenuScene::goToStats(cocos2d::Ref* sender) {
-    Director::getInstance()->replaceScene(StatsScene::createScene());
+    UIManager::getInstance()->changeScene(StatsScene::createScene());
 }
 
 void MainMenuScene::goToOptions(cocos2d::Ref* sender) {
-    Director::getInstance()->replaceScene(OptionsScene::createScene());
+    UIManager::getInstance()->changeScene(OptionsScene::createScene());
 }

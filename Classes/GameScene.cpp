@@ -24,7 +24,6 @@ bool GameScene::init() {
     background->setPosition(size / 2);
     this->addChild(background);
 
-
     // Khởi tạo người chơi
     _player1 = new Player(1, Color3B::GREEN);
     _player2 = (_mode == GameMode::ONE_PLAYER) ? new AIPlayer() : new Player(2, Color3B::ORANGE);
