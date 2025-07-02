@@ -19,6 +19,7 @@ public:
         float duration = 0.2f,
         const std::function<void()>& onTransitionEnd = nullptr);
 
+    static cocos2d::Label* createLabelFigma(const std::string& text, float fontSize, float left, float top, float width, float height); 
 private:
     UIManager() = default;
     static UIManager* instance;

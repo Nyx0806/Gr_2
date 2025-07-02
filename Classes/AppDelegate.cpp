@@ -24,6 +24,7 @@
 
 #include "AppDelegate.h"
 #include "MainMenuScene.h"
+#include "OnePlayerConfigScene.h"
 
 // #define USE_AUDIO_ENGINE 1
 
@@ -81,6 +82,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         director->setOpenGLView(glview);
     }
     // Set the design resolution
+    // 
     glview->setDesignResolutionSize(720, 1280, ResolutionPolicy::NO_BORDER);
     auto frameSize = glview->getFrameSize();
     // if the frame's height is larger than the height of medium size.
@@ -102,10 +104,12 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = MainMenuScene::createScene();
+    //auto scene = MainMenuScene::createScene();
+	auto test = OnePlayerConfigScene::createScene();
 
     // run
-    director->runWithScene(scene);
+    //director->runWithScene(scene);
+	director->runWithScene(test);
 
     return true;
 }

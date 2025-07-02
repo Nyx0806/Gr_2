@@ -22,7 +22,7 @@ Button* UIManager::createButton(
     button->setPosition(position);
     button->setScale(scale);
     button->addClickEventListener(callback);
-    return button;
+    return button;  
 }
 
 void UIManager::changeScene(Scene* scene, float duration, const std::function<void()>& onTransitionEnd) {
@@ -37,3 +37,19 @@ void UIManager::changeScene(Scene* scene, float duration, const std::function<vo
 
     Director::getInstance()->replaceScene(transition);
 }
+
+Label* UIManager::createLabelFigma(const std::string& text, float fontSize, float left, float top, float width, float height) {
+    auto label = Label::createWithTTF(text, "fonts/PoetsenOne-Regular.ttf", fontSize);
+    label->setColor(Color3B::WHITE);
+    label->setAlignment(TextHAlignment::LEFT);
+    label->setAnchorPoint(Vec2(0.0f, 1.0f)); // neo trái trên
+	label->setScale(1.3f);
+
+    float posX = left;
+    float posY = 720 - top; // dùng đúng chiều cao design
+    label->setPosition(Vec2(posX, posY));
+
+    return label;
+}
+
+

@@ -1,7 +1,8 @@
 #include "MainMenuScene.h"
-#include "GameScene.h"
 #include "OptionsScene.h"
 #include "StatsScene.h"
+#include "OnePlayerConfigScene.h"
+#include "TwoPlayerConfigScene.h"`
 #include "UIManager.h"
 
 using namespace cocos2d;
@@ -72,16 +73,11 @@ bool MainMenuScene::init() {
 }
 
 void MainMenuScene::goToOnePlayer(cocos2d::Ref* sender) {
-	// Chuyển đến GameScene với chế độ chơi một người
-	UIManager::getInstance()->changeScene(
-        GameScene::createScene(GameMode::ONE_PLAYER)
-    );
+	UIManager::getInstance()->changeScene(OnePlayerConfigScene::createScene());
 }
 
 void MainMenuScene::goToTwoPlayer(cocos2d::Ref* sender) {
-    UIManager::getInstance()->changeScene(
-        GameScene::createScene(GameMode::TWO_PLAYER)
-    );
+	UIManager::getInstance()->changeScene(TwoPlayerConfigScene::createScene());
 }
 
 void MainMenuScene::goToStats(cocos2d::Ref* sender) {

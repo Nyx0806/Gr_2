@@ -1,7 +1,7 @@
 #include "WinLoseScene.h"
 #include "UIManager.h"
 #include "MainMenuScene.h"
-#include "GameScene.h"
+
 
 using namespace cocos2d;
 

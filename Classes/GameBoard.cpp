@@ -1,49 +1,95 @@
-// IMPLEMENTATION: GameBoard.cpp (m?t ph?n tri?n khai)
-#include "GameBoard.h"
-using namespace cocos2d;
+﻿#include "GameBoard.h"
+#include "GameSceneBase.h"
+
+USING_NS_CC;
 
 bool GameBoard::init() {
     if (!Node::init()) return false;
 
     resetBoard();
-    return true;
-}
+    // Reset trạng thái mảng logic và sprite
+    for (int row = 0; row < MAX_ROW; ++row) {
+        for (int col = 0; col < MAX_COL; ++col) {
+            _board[row][col] = 0;
+            _gridSprites[row][col] = nullptr;
 
-bool GameBoard::dropPiece(int col, int playerId) {
-    for (int row = MAX_ROW - 1; row >= 0; --row) {
-        if (_board[row][col] == 0) {
-            _board[row][col] = playerId;
-            return true;
+            
+            auto slot = cocos2d::Sprite::create("image/Gameplay UI/empty.png");
+            slot->setPosition(Vec2(
+                col * CELL_SIZE + CELL_SIZE / 2,
+                row * CELL_SIZE + CELL_SIZE / 2
+            ));
+            this->addChild(slot, 0); // Z-order = 0 dưới quân cờ
         }
     }
-    return false; // C?t ??y
+
+    // Đặt kích thước logic cho node
+    this->setContentSize(Size(MAX_COL * CELL_SIZE, MAX_ROW * CELL_SIZE));
+    this->setAnchorPoint(Vec2::ZERO);
+    this->setPosition(Vec2::ZERO);
+
+    return true;
+
 }
 
-int GameBoard::getCell(int row, int col) {
+int GameBoard::dropPiece(int col, int playerId) {
+    for (int row = 0; row < MAX_ROW; ++row) {
+        if (_board[row][col] == 0) {
+            _board[row][col] = playerId;
+            return row;
+        }
+    }
+    return -1;
+}
+
+void GameBoard::addPieceSprite(int row, int col, int playerId) {
+    // Lấy màu quân cờ dựa theo player
+    int color = GameSceneBase::getColorForPlayer(playerId);
+    std::string pieceImg = (color == 1)
+        ? "image/1 Player Mode/cam.png"
+        : "image/1 Player Mode/xanh.png";
+
+    // Tạo quân cờ và đặt ban đầu phía trên bàn cờ (rơi xuống)
+    auto piece = cocos2d::Sprite::create(pieceImg);
+    piece->setPosition(Vec2(
+        col * CELL_SIZE + CELL_SIZE / 2,
+        MAX_ROW * CELL_SIZE + 100 // Vị trí "trên cao" để rơi xuống
+    ));
+    this->addChild(piece, 1); // Layer cao hơn empty slot
+
+    // Vị trí đích đến (trung tâm ô rỗng)
+    Vec2 targetPos = Vec2(
+        col * CELL_SIZE + CELL_SIZE / 2,
+        row * CELL_SIZE + CELL_SIZE / 2
+    );
+
+    // Hiệu ứng rơi
+    auto moveAction = cocos2d::MoveTo::create(0.25f, targetPos);
+    piece->runAction(moveAction);
+
+    // Lưu lại sprite để quản lý
+    _gridSprites[row][col] = piece;
+}
+
+int GameBoard::getCell(int row, int col) const {
+    if (row < 0 || row >= MAX_ROW || col < 0 || col >= MAX_COL)
+        return -1;
     return _board[row][col];
 }
 
-bool GameBoard::checkWin(int lastRow, int lastCol, int playerId) {
-    // Ki?m tra t?t c? 4 h??ng: ngang, d?c, ch�o /
-    return countInDirection(lastRow, lastCol, 1, 0, playerId) + countInDirection(lastRow, lastCol, -1, 0, playerId) > 2 ||
-        countInDirection(lastRow, lastCol, 0, 1, playerId) + countInDirection(lastRow, lastCol, 0, -1, playerId) > 2 ||
-        countInDirection(lastRow, lastCol, 1, 1, playerId) + countInDirection(lastRow, lastCol, -1, -1, playerId) > 2 ||
-        countInDirection(lastRow, lastCol, 1, -1, playerId) + countInDirection(lastRow, lastCol, -1, 1, playerId) > 2;
-}
-
-int GameBoard::countInDirection(int row, int col, int dx, int dy, int playerId) {
-    int count = 0;
-    int r = row + dy, c = col + dx;
-    while (r >= 0 && r < MAX_ROW && c >= 0 && c < MAX_COL && _board[r][c] == playerId) {
-        ++count;
-        r += dy;
-        c += dx;
-    }
-    return count;
-}
-
 void GameBoard::resetBoard() {
-    for (int r = 0; r < MAX_ROW; ++r)
-        for (int c = 0; c < MAX_COL; ++c)
-            _board[r][c] = 0;
+    for (int row = 0; row < MAX_ROW; ++row)
+        for (int col = 0; col < MAX_COL; ++col) {
+            _board[row][col] = 0;
+            if (_gridSprites[row][col]) {
+                _gridSprites[row][col]->removeFromParent();
+                _gridSprites[row][col] = nullptr;
+            }
+        }
+}
+
+// (Tùy bạn) kiểm tra thắng hàng dọc/ngang/chéo — giữ nguyên nếu đã có
+bool GameBoard::checkWin(int row, int col, int playerId) const {
+    // ... (giữ lại phần này nếu bạn đã có sẵn)
+    return false;
 }
