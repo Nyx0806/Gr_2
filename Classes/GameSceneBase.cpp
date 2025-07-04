@@ -63,17 +63,19 @@ bool GameSceneBase::initBase() {
         _avatarP2->setTexture("image/1 Player Mode/cam.png");
     }
 
+    float _height = 290;
+    float _width = Director::getInstance()->getVisibleSize().width / 2 - 295;
+
     // --- 5. Board background ---
     _board = GameBoard::create();
-	_board->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2 -300, 300));
-    _board->setScale(0.8f); // vì đã dùng CELL_SIZE nên không cần scale nữa
+	_board->setPosition(Vec2(_width, _height));
+    //_board->setScale(1.0f);
     this->addChild(_board, 1);
 
     // --- 6. Grid sprite over the board ---
     auto boardFrame = Sprite::create("image/Gameplay UI/board.png");
-    boardFrame->setAnchorPoint(Vec2::ZERO);
-    boardFrame->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2 - 310, 260));
-	boardFrame->setScale(1.35f); // Giữ nguyên kích thước gốc
+    boardFrame->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2, Director::getInstance()->getVisibleSize().height / 2 + 50));
+	boardFrame->setScale(1.35f);
     this->addChild(boardFrame, 10); // Trên các quân cờ
 
     // --- 7. Timer (tuỳ chọn) ---
@@ -89,6 +91,18 @@ bool GameSceneBase::initBase() {
         Director::getInstance()->popScene();
         });
     this->addChild(pauseBtn);
+
+    // === DEBUG GRID ===
+    //auto drawNode = DrawNode::create();
+    //for (int row = 0; row <= MAX_ROW; ++row) {
+    //    float y = row * CELL_SIZE_Width;
+    //    drawNode->drawLine(Vec2(_width, y + _height), Vec2(MAX_COL * CELL_SIZE_Width, _height + y), Color4F::GREEN);
+    //}
+    //for (int col = 0; col <= MAX_COL; ++col) {
+    //    float x = col * CELL_SIZE_Heigth;
+    //    drawNode->drawLine(Vec2(_width + x, _height), Vec2(_width + x, MAX_ROW * CELL_SIZE_Heigth + _height), Color4F::GREEN);
+    //}
+    //this->addChild(drawNode, 99); // Z-order cao để hiển thị trên cùng
 
     updatePieceUI();
     return true;
@@ -125,11 +139,12 @@ int GameSceneBase::getFirstMove() {
 }
 
 void GameSceneBase::checkWin(int row, int col) {
-   /* if (_board->checkWin(row, col, _currentPlayer)) {
+    if (_board->checkWin(row, col, _currentPlayer)) {
         this->scheduleOnce([=](float) {
+			auto labels = Label::createWithTTF("Player " + std::to_string(_currentPlayer) + " wins!", "fonts/PoetsenOne-Regular.ttf", 48);
             showWinPopup(_currentPlayer);
             }, 0.3f, "delayWinPopup");
-    }*/
+    }
 }
 
 void GameSceneBase::switchTurn() {

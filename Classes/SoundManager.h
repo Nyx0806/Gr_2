@@ -1,14 +1,24 @@
-﻿// MODULE 8: SoundManager – Quản lý âm thanh
-#pragma once
+﻿#ifndef __SOUND_MANAGER_H__
+#define __SOUND_MANAGER_H__
+
+#include "cocos2d.h"
+#include "audio/include/AudioEngine.h"
+
 class SoundManager {
 public:
-    static SoundManager* getInstance();
-    void playMoveSound();   // Âm thanh khi đánh cờ
-    void playWinSound();    // Âm thanh khi chiến thắng
-    void setMuted(bool m);  // Bật/tắt tiếng
-    bool isMuted();
+    static SoundManager& getInstance();
+
+    void playBackgroundMusic(const std::string& filePath);
+    void stopBackgroundMusic();
+    void setVolume(float volume);
 
 private:
-    bool _muted;
-    SoundManager();
+    int bgmId = -1;
+    bool isPlaying = false;
+
+    SoundManager() {}
+    SoundManager(const SoundManager&) = delete;
+    void operator=(const SoundManager&) = delete;
 };
+
+#endif

@@ -16,15 +16,15 @@ bool GameBoard::init() {
             
             auto slot = cocos2d::Sprite::create("image/Gameplay UI/empty.png");
             slot->setPosition(Vec2(
-                col * CELL_SIZE + CELL_SIZE / 2,
-                row * CELL_SIZE + CELL_SIZE / 2
+                col * CELL_SIZE_Heigth + CELL_SIZE_Heigth / 2,
+                row * CELL_SIZE_Width + CELL_SIZE_Width / 2
             ));
             this->addChild(slot, 0); // Z-order = 0 dưới quân cờ
         }
     }
 
     // Đặt kích thước logic cho node
-    this->setContentSize(Size(MAX_COL * CELL_SIZE, MAX_ROW * CELL_SIZE));
+    this->setContentSize(Size(MAX_COL * CELL_SIZE_Width, MAX_ROW * CELL_SIZE_Heigth));
     this->setAnchorPoint(Vec2::ZERO);
     this->setPosition(Vec2::ZERO);
 
@@ -43,32 +43,46 @@ int GameBoard::dropPiece(int col, int playerId) {
 }
 
 void GameBoard::addPieceSprite(int row, int col, int playerId) {
+    std::string pieceImg = "";
+	cocos2d::Sprite* Img = nullptr;
     // Lấy màu quân cờ dựa theo player
     int color = GameSceneBase::getColorForPlayer(playerId);
-    std::string pieceImg = (color == 1)
-        ? "image/1 Player Mode/cam.png"
-        : "image/1 Player Mode/xanh.png";
+    switch (color) {
+    case 1:
+		pieceImg = "image/1 Player Mode/cam.png";
+        break;
+	case 2:
+        pieceImg = "image/1 Player Mode/xanh.png";
+		break;
+    }
+    if(pieceImg != "") {
+        Img = Sprite::create(pieceImg);
+		CCLOG(" playerId: %d, mau: %s", playerId, pieceImg.c_str());
+    }
 
-    // Tạo quân cờ và đặt ban đầu phía trên bàn cờ (rơi xuống)
-    auto piece = cocos2d::Sprite::create(pieceImg);
-    piece->setPosition(Vec2(
-        col * CELL_SIZE + CELL_SIZE / 2,
-        MAX_ROW * CELL_SIZE + 100 // Vị trí "trên cao" để rơi xuống
+    if (!Img) {
+        CCLOG("Không thể tạo sprite cho quân cờ với playerId: %d", playerId);
+        return;
+	}
+
+    Img->setPosition(Vec2(
+        col * CELL_SIZE_Width + CELL_SIZE_Width / 2,
+        MAX_ROW * CELL_SIZE_Heigth + 100 // Vị trí "trên cao" để rơi xuống
     ));
-    this->addChild(piece, 1); // Layer cao hơn empty slot
+    this->addChild(Img, 1); // Layer cao hơn empty slot
 
     // Vị trí đích đến (trung tâm ô rỗng)
     Vec2 targetPos = Vec2(
-        col * CELL_SIZE + CELL_SIZE / 2,
-        row * CELL_SIZE + CELL_SIZE / 2
+        col * CELL_SIZE_Width + CELL_SIZE_Width / 2,
+        row * CELL_SIZE_Heigth + CELL_SIZE_Heigth / 2
     );
 
     // Hiệu ứng rơi
     auto moveAction = cocos2d::MoveTo::create(0.25f, targetPos);
-    piece->runAction(moveAction);
+    Img->runAction(moveAction);
 
     // Lưu lại sprite để quản lý
-    _gridSprites[row][col] = piece;
+    _gridSprites[row][col] = Img;
 }
 
 int GameBoard::getCell(int row, int col) const {

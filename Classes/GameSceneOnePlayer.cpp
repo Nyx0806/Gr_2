@@ -20,12 +20,12 @@ bool GameSceneOnePlayer::init() {
     // Tạo các vùng click như chế độ 2 người
     for (int col = 0; col < MAX_COL; ++col) {
         auto tapArea = ui::Layout::create();
-        tapArea->setContentSize(Size(CELL_SIZE, CELL_SIZE * MAX_ROW));
+        tapArea->setContentSize(Size(CELL_SIZE_Width, CELL_SIZE_Heigth * MAX_ROW));
         tapArea->setPosition(Vec2(
-            _board->getPositionX() + col * CELL_SIZE + CELL_SIZE / 2,
-            _board->getPositionY() + (CELL_SIZE * MAX_ROW / 2)
+            _board->getPositionX() + col * CELL_SIZE_Width + CELL_SIZE_Width / 2,
+            _board->getPositionY() + (CELL_SIZE_Heigth * MAX_ROW / 2)
         ));
-        tapArea->setTouchEnabled(true); // 👈 cần dòng này!
+        tapArea->setTouchEnabled(true);
 
         tapArea->addClickEventListener([=](Ref*) {
             this->onColumnTap(col);
@@ -41,9 +41,9 @@ bool GameSceneOnePlayer::init() {
 void GameSceneOnePlayer::onColumnTap(int col) {
     if (_currentPlayer != 1) return;
 
-    int row = _board->dropPiece(col, _currentPlayer); // 👈 xử lý logic
+    int row = _board->dropPiece(col, _currentPlayer); //xử lý logic
     if (row >= 0) {
-        _board->addPieceSprite(row, col, _currentPlayer); // 👈 thêm sprite nếu thành công
+        _board->addPieceSprite(row, col, _currentPlayer); //thêm sprite nếu thành công
 
         checkWin(row, col);
         switchTurn();
@@ -60,7 +60,7 @@ void GameSceneOnePlayer::performAIMove() {
     int aiCol = _aiPlayer->chooseMove(_board);
     int placedRow = _board->dropPiece(aiCol, 2);
     if (aiCol >= 0 && placedRow != -1) {
-        _board->addPieceSprite(placedRow, aiCol, 2); // 👈 thêm animation
+        _board->addPieceSprite(placedRow, aiCol, 2); //thêm animation
 
         checkWin(placedRow, aiCol);
         switchTurn();

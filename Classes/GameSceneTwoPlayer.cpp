@@ -1,4 +1,6 @@
 ﻿#include "GameSceneTwoPlayer.h"
+#include "GameBoard.h"
+#include "GameSceneBase.h"
 
 USING_NS_CC;
 
@@ -11,15 +13,34 @@ Scene* GameSceneTwoPlayer::createScene() {
 
 bool GameSceneTwoPlayer::init() {
     if (!Scene::init()) return false;
+    
+    // Tạo các vùng click như chế độ 2 người
+    for (int col = 0; col < MAX_COL; ++col) {
+        auto tapArea = ui::Layout::create();
+        tapArea->setContentSize(Size(CELL_SIZE_Width, CELL_SIZE_Heigth * MAX_ROW));
+        tapArea->setPosition(Vec2(
+            GameSceneBase::_board->getPositionX() + col * CELL_SIZE_Width + CELL_SIZE_Width / 2,
+            GameSceneBase::_board->getPositionY() + (CELL_SIZE_Heigth * MAX_ROW / 2)
+        ));
+        tapArea->setTouchEnabled(true);
 
-    // ví dụ đơn giản
-    auto label = Label::createWithTTF("Two Player Scene", "fonts/PoetsenOne-Regular.ttf", 36);
-    label->setPosition(Director::getInstance()->getVisibleSize() / 2);
-    this->addChild(label);
+        tapArea->addClickEventListener([=](Ref*) {
+            this->onColumnTap(col);
+            });
+
+        this->addChild(tapArea);
+    }
+
 
     return true;
 }
-void GameSceneTwoPlayer::onColumnTap(int column) {
-    // TODO: xử lý khi người chơi chạm vào cột
-    CCLOG("Two Player - Tapped column: %d", column);
+void GameSceneTwoPlayer::onColumnTap(int col) {
+    int row = _board->dropPiece(col, _currentPlayer); //xử lý logic
+    if (row >= 0) {
+        _board->addPieceSprite(row, col, _currentPlayer); //thêm sprite nếu thành công
+
+        checkWin(row, col);
+        switchTurn();
+
+    }
 }

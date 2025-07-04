@@ -4,6 +4,7 @@
 #include "OnePlayerConfigScene.h"
 #include "TwoPlayerConfigScene.h"`
 #include "UIManager.h"
+#include "SoundManager.h"
 
 using namespace cocos2d;
 
@@ -21,6 +22,7 @@ bool MainMenuScene::init() {
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     // Thiết kế Menu chính
+	SoundManager::getInstance().playBackgroundMusic("sound/bg_sound.mp3");
 
 	// Tạo nền cho Menu chính
     auto background = Sprite::create("image/Main UI/BG.png");

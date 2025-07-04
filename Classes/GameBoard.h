@@ -2,8 +2,11 @@
 #include "cocos2d.h"
 
 #define MAX_ROW 6
-#define MAX_COL 7 
-#define CELL_SIZE 100
+#define MAX_COL 7
+#define CELL_SIZE_Width 84
+#define CELL_SIZE_Heigth 91
+
+
 
 class GameBoard : public cocos2d::Node {
 public:
