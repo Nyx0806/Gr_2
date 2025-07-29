@@ -2,9 +2,11 @@
 #include "OptionsScene.h"
 #include "StatsScene.h"
 #include "OnePlayerConfigScene.h"
-#include "TwoPlayerConfigScene.h"`
+#include "TwoPlayerScene.h"
 #include "UIManager.h"
 #include "SoundManager.h"
+#include "GameBoard.h"
+#include "platform/CCFileUtils.h"
 
 using namespace cocos2d;
 
@@ -42,6 +44,16 @@ bool MainMenuScene::init() {
     float spacing = 130.0f;
     float scale = 0.6f;
 
+    // CONTINUE
+    std::string savePath = FileUtils::getInstance()->getWritablePath() + "saved_game.json";
+    if (FileUtils::getInstance()->isFileExist(savePath)) {
+        auto btnCon = UIManager::getInstance()->createButton("image/Main UI/continue.png",
+            Vec2(size.width / 2, startY - spacing * -1),
+            CC_CALLBACK_1(MainMenuScene::goToContinue, this),
+            scale);
+        this->addChild(btnCon);
+    }
+
     // ONE PLAYER
     auto btnOne = UIManager::getInstance()->createButton("image/Main UI/one player button.png",
         Vec2(size.width / 2, startY),
@@ -49,7 +61,7 @@ bool MainMenuScene::init() {
         scale);
     this->addChild(btnOne);
 
-    // TWO PLAYER
+	// TWO PLAYER
     auto btnTwo = UIManager::getInstance()->createButton("image/Main UI/two player button.png",
         Vec2(size.width / 2, startY - spacing),
         CC_CALLBACK_1(MainMenuScene::goToTwoPlayer, this),
@@ -74,12 +86,25 @@ bool MainMenuScene::init() {
     return true;
 }
 
+void MainMenuScene::goToContinue(cocos2d::Ref* sender) {
+    auto gameBoard = GameBoard::create();
+    if (gameBoard->loadGameState()) {
+        auto scene = Scene::create();
+        scene->addChild(gameBoard);
+        Director::getInstance()->replaceScene(scene);
+    }
+    else {
+        CCLOG("Failed to load saved game");
+        // Có thể hiển thị thông báo lỗi hoặc chuyển về game mới
+    }
+}
+
 void MainMenuScene::goToOnePlayer(cocos2d::Ref* sender) {
-	UIManager::getInstance()->changeScene(OnePlayerConfigScene::createScene());
+    UIManager::getInstance()->changeScene(OnePlayerConfigScene::createScene());
 }
 
 void MainMenuScene::goToTwoPlayer(cocos2d::Ref* sender) {
-	UIManager::getInstance()->changeScene(TwoPlayerConfigScene::createScene());
+    UIManager::getInstance()->changeScene(TwoPlayerScene::createScene());
 }
 
 void MainMenuScene::goToStats(cocos2d::Ref* sender) {

@@ -10,6 +10,7 @@ private:
     void goToTwoPlayer(cocos2d::Ref* sender); // Sang chế độ chơi 2 người
     void goToStats(cocos2d::Ref* sender);     // Xem thống kê
     void goToOptions(cocos2d::Ref* sender);   // Tuỳ chọn
+    void goToContinue(cocos2d::Ref* sender);
 
     CREATE_FUNC(MainMenuScene);
 };

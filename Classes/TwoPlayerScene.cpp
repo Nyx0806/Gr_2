@@ -1,24 +1,23 @@
-﻿#include "UIManager.h"
-#include "GameSceneTwoPlayer.h"
+#include "TwoPlayerScene.h"
+#include "UIManager.h"
 #include "StatsScene.h"
 #include "GameSceneBase.h"
+#include "GameBoard2.h"
 #include "MainMenuScene.h"
 #include "FigmaLayoutHelper.h"
-#include "TwoPlayerConfigScene.h"
 
 USING_NS_CC;
 using namespace ui;
 
-Scene* TwoPlayerConfigScene::createScene() {
+Scene* TwoPlayerScene::createScene() {
     auto scene = Scene::create();
-    auto layer = TwoPlayerConfigScene::create();
+    auto layer = TwoPlayerScene::create();
     scene->addChild(layer);
     return scene;
 }
 
-bool TwoPlayerConfigScene::init() {
+bool TwoPlayerScene::init() {
     if (!Scene::init()) return false;
-
     auto size = Director::getInstance()->getVisibleSize();
     Vec2 center = size / 2;
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -42,14 +41,13 @@ bool TwoPlayerConfigScene::init() {
     auto nameBg1 = Sprite::create("image/2 Player Mode/namep1_border.png");
     FigmaLayoutHelper::apply(nameBg1, 360, 390, 613, 109);
     nameBg1->setScale(0.7f);
-    this->addChild(nameBg1);
+    this->addChild(nameBg1, 0);
 
     _player1Name = TextField::create("Player 1", "fonts/PoetsenOne-Regular.ttf", 30);
     _player1Name->setPosition(nameBg1->getPosition());
     _player1Name->setTextColor(Color4B::WHITE);
     _player1Name->setMaxLength(10);
-    _player1Name->setTextHorizontalAlignment(TextHAlignment::LEFT);
-    this->addChild(_player1Name);
+    this->addChild(_player1Name, 1);
 
     _player1Avatar = Sprite::create("image/2 Player Mode/cam.png");
     _player1Avatar->setAnchorPoint(Vec2(0.0f, 0.5f));
@@ -63,11 +61,11 @@ bool TwoPlayerConfigScene::init() {
     nameBg2->setScale(0.7f);
     this->addChild(nameBg2);
 
-    _player2Name = TextField::create("Machine", "fonts/PoetsenOne-Regular.ttf", 30);
+    _player2Name = TextField::create("Player 2", "fonts/PoetsenOne-Regular.ttf", 30);
     _player2Name->setPosition(nameBg2->getPosition());
     _player2Name->setTextColor(Color4B::WHITE);
-	_player2Name->setMaxLength(10);
-    this->addChild(_player2Name);
+    _player2Name->setMaxLength(10);
+    this->addChild(_player2Name, 1);
 
     _player2Avatar = Sprite::create("image/2 Player Mode/xanh.png");
     _player2Avatar->setAnchorPoint(Vec2(0.0f, 0.5f));
@@ -89,27 +87,27 @@ bool TwoPlayerConfigScene::init() {
     orange->addClickEventListener([=](Ref*) {
         _colorP1 = 1;
         updateColorUI();
-        });
-    swapBg->addChild(orange,1,"colorP1");
+    });
+    swapBg->addChild(orange, 1, "colorP1");
 
     auto green = Button::create("image/2 Player Mode/xanh.png");
     green->setPosition(Vec2(300, 65));
     green->addClickEventListener([=](Ref*) {
         _colorP1 = 2;
         updateColorUI();
-        });
-    swapBg->addChild(green,1,"colorP2");
+    });
+    swapBg->addChild(green, 1, "colorP2");
 
     auto swapBtn = Button::create("image/2 Player Mode/arrow.png");
     swapBtn->setPosition(Vec2(180, 65));
     swapBtn->addClickEventListener([=](Ref*) {
         _colorP1 = (_colorP1 == 1) ? 2 : 1;
         updateColorUI();
-        });
+    });
     swapBg->addChild(swapBtn);
 
     // --- FIRST MOVE ---
-    this->addChild(UIManager::createLabelFigma("FIRST MOVE", 26, 55,230,298,66));
+    this->addChild(UIManager::createLabelFigma("FIRST MOVE", 26, 55, 230, 298, 66));
 
     auto moveBg = Sprite::create("image/2 Player Mode/color_border.png");
     moveBg->setName("firstMoveBg");
@@ -128,18 +126,17 @@ bool TwoPlayerConfigScene::init() {
     auto swapMoveBtn = Button::create("image/2 Player Mode/arrow.png");
     swapMoveBtn->setPosition(Vec2(180, 65));
     swapMoveBtn->addClickEventListener([=](Ref*) {
-		CCLOG("Swapping first move");
         _firstMove = (_firstMove == 1) ? 2 : 1;
-		updateFirstMoveUI();
-        });
+        updateFirstMoveUI();
+    });
     moveBg->addChild(swapMoveBtn);
 
     auto btnP1 = Button::create("image/2 Player Mode/border.png");
-    btnP1->setPosition(Vec2(65,65));
+    btnP1->setPosition(Vec2(65, 65));
     btnP1->addClickEventListener([=](Ref*) {
         _firstMove = 1;
         updateFirstMoveUI();
-        });
+    });
     moveBg->addChild(btnP1);
 
     auto btnP2 = Button::create("image/2 Player Mode/border.png");
@@ -147,7 +144,7 @@ bool TwoPlayerConfigScene::init() {
     btnP2->addClickEventListener([=](Ref*) {
         _firstMove = 2;
         updateFirstMoveUI();
-        });
+    });
     moveBg->addChild(btnP2);
 
     // --- BACK BUTTON ---
@@ -161,8 +158,12 @@ bool TwoPlayerConfigScene::init() {
     auto start = UIManager::getInstance()->createButton("image/2 Player Mode/start button.png",
         Vec2(center.x + 150, 270),
         [=](Ref*) {
-            UIManager::getInstance()->changeScene(GameSceneTwoPlayer::createScene());
-        },
+        GameSceneBase::setGameSettings(_player1Name->getString(), _player2Name->getString(), _colorP1, _firstMove);
+        std::string p1Avatar = (_colorP1 == 1) ? "image/2 Player Mode/cam.png" : "image/2 Player Mode/xanh.png";
+        std::string p2Avatar = (_colorP1 == 1) ? "image/2 Player Mode/xanh.png" : "image/2 Player Mode/cam.png";
+        GameSceneBase::setPlayerAvatars(p1Avatar, p2Avatar);
+        UIManager::getInstance()->changeScene(GameBoard2::createScene());
+    },
         0.6f);
     this->addChild(start);
 
@@ -172,14 +173,14 @@ bool TwoPlayerConfigScene::init() {
     return true;
 }
 
-void TwoPlayerConfigScene::updateColorUI() {
+void TwoPlayerScene::updateColorUI() {
     auto colorBg = this->getChildByName("colorSwitchBg");
     if (!colorBg) {
         return;
     }
 
     auto sprite1 = dynamic_cast<Button*>(colorBg->getChildByName("colorP1"));
-    auto sprite2 = dynamic_cast<Button*>(colorBg->getChildByName("colorP2"));    
+    auto sprite2 = dynamic_cast<Button*>(colorBg->getChildByName("colorP2"));
 
     if (_colorP1 == 1) {
         sprite1->loadTextureNormal("image/2 Player Mode/camSelect.png");
@@ -195,7 +196,7 @@ void TwoPlayerConfigScene::updateColorUI() {
     }
 }
 
-void TwoPlayerConfigScene::updateFirstMoveUI() {
+void TwoPlayerScene::updateFirstMoveUI() {
     auto firstMoveBg = this->getChildByName("firstMoveBg");
     if (!firstMoveBg) return;
 
@@ -213,3 +214,4 @@ void TwoPlayerConfigScene::updateFirstMoveUI() {
         sprite2->setTexture("image/2 Player Mode/xanhSelect.png");
     }
 }
+

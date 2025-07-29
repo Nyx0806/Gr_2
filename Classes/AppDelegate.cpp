@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
@@ -25,6 +25,8 @@
 #include "AppDelegate.h"
 #include "MainMenuScene.h"
 #include "OnePlayerConfigScene.h"
+#include "SoundManager.h"
+#include "StatsManager.h"
 
 // #define USE_AUDIO_ENGINE 1
 
@@ -105,9 +107,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // create a scene. it's an autorelease object
     auto scene = MainMenuScene::createScene();
+    StatsManager::getInstance()->loadStats();
 
     // run
     director->runWithScene(scene);
+
+    SoundManager::getInstance().playBackgroundMusic("sound/bg_sound.mp3");
+    SoundManager::getInstance().updateAllVolumes(); // gọi sau khi phát nhạc
+
 
     return true;
 }

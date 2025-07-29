@@ -1,25 +1,17 @@
-﻿#pragma once
+#pragma once
 
 #include "cocos2d.h"
 
-const int ROWS = 6;
-const int COLS = 7;
+const int ROW = 6;
+const int COL = 7;
 
-class GameBoard : public cocos2d::Scene {
+class GameBoard2 : public cocos2d::Scene {
 public:
     static cocos2d::Scene* createScene();
     virtual bool init();
-    void saveGameState();
-    bool loadGameState();
-    CREATE_FUNC(GameBoard);
-
-    //Các hàm hỗ trợ cho AI
-    int getCell(int row, int col) const;
-    bool checkWin(int row, int col, int player) const;
-    int simulateDrop(int col, int pid);
-    void undoDrop(int col);
     bool isBoardFull();
     void showEndGamePanel(const std::string& message);
+    CREATE_FUNC(GameBoard2);
 
 private:
     cocos2d::Vec2 boardOrigin;
@@ -27,11 +19,8 @@ private:
     float cellHeight;
     bool canPlay = true;
     bool gameOver = false;
-    bool vsAI = true;
     int currentPlayer = 1;
-    int humanPlayer;
-    int aiPlayer;
-    int board[ROWS][COLS] = { 0 };
+    int board[ROW][COL] = { 0 };
     bool blockOptionButton = false;
 
     cocos2d::Layer* gameplayLayer;
@@ -39,8 +28,6 @@ private:
     cocos2d::Vec2 getCellPosition(int row, int col);
     void showPauseMenu();
     void dropDisc(int col, int player);
-    void runAI();
     bool checkWin(int player);
     bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
-    void recreateBoard();
 };

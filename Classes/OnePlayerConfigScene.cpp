@@ -1,6 +1,5 @@
 ﻿#include "OnePlayerConfigScene.h"
 #include "UIManager.h"
-#include "GameSceneOnePlayer.h"
 #include "StatsScene.h"
 #include "GameSceneBase.h"
 #include "MainMenuScene.h"
@@ -18,7 +17,6 @@ Scene* OnePlayerConfigScene::createScene() {
 
 bool OnePlayerConfigScene::init() {
     if (!Scene::init()) return false;
-
     auto size = Director::getInstance()->getVisibleSize();
     Vec2 center = size / 2;
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -42,13 +40,13 @@ bool OnePlayerConfigScene::init() {
     auto nameBg1 = Sprite::create("image/1 Player Mode/namep1_border.png");
     FigmaLayoutHelper::apply(nameBg1, 360, 390, 613, 109);
     nameBg1->setScale(0.7f);
-    this->addChild(nameBg1);
+    this->addChild(nameBg1, 0);
 
     _player1Name = TextField::create("Player 1", "fonts/PoetsenOne-Regular.ttf", 30);
     _player1Name->setPosition(nameBg1->getPosition());
     _player1Name->setTextColor(Color4B::WHITE);
     _player1Name->setMaxLength(10);
-    this->addChild(_player1Name);
+    this->addChild(_player1Name, 1);
 
     _player1Avatar = Sprite::create("image/1 Player Mode/cam.png");
     _player1Avatar->setAnchorPoint(Vec2(0.0f, 0.5f));
@@ -126,7 +124,6 @@ bool OnePlayerConfigScene::init() {
     auto swapMoveBtn = Button::create("image/1 Player Mode/arrow.png");
     swapMoveBtn->setPosition(Vec2(180, 65));
     swapMoveBtn->addClickEventListener([=](Ref*) {
-		CCLOG("Swapping first move");
         _firstMove = (_firstMove == 1) ? 2 : 1;
 		updateFirstMoveUI();
         });
@@ -179,7 +176,10 @@ bool OnePlayerConfigScene::init() {
         [=](Ref*) {
             GameSceneBase::setGameSettings(_player1Name->getString(), "Machine", _colorP1, _firstMove);
             GameSceneBase::setAIDifficulty(_difficulty);
-            UIManager::getInstance()->changeScene(GameSceneOnePlayer::createScene());
+            std::string p1Avatar = (_colorP1 == 1) ? "image/1 Player Mode/cam.png" : "image/1 Player Mode/xanh.png";
+            std::string p2Avatar = (_colorP1 == 1) ? "image/1 Player Mode/xanh.png" : "image/1 Player Mode/cam.png";
+            GameSceneBase::setPlayerAvatars(p1Avatar, p2Avatar);
+            UIManager::getInstance()->changeScene(GameBoard::createScene());
         },
         0.6f);
     this->addChild(start);

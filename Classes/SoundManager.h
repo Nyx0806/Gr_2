@@ -11,6 +11,14 @@ public:
     void playBackgroundMusic(const std::string& filePath);
     void stopBackgroundMusic();
     void setVolume(float volume);
+    void playClickSound();
+    void setBGMVolume(float volume);     // âm lượng nhạc nền
+    void setSFXVolume(float volume);     // âm lượng hiệu ứng click
+    void setMasterVolume(float volume);  // âm lượng tổng
+    void updateAllVolumes();             // cập nhật lại âm lượng theo master
+
+
+
 
 private:
     int bgmId = -1;

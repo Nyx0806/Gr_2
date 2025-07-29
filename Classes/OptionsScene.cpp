@@ -52,50 +52,85 @@ bool OptionsScene::init() {
     subtitle->setScale(0.8f);
     this->addChild(subtitle);
 
-    auto soundIcon = Sprite::create("image/Options UI/nut am thanh.png");
-    soundIcon->setPosition(Vec2(center.x, 900));
-    this->addChild(soundIcon);
+    //auto soundIcon = Sprite::create("image/Options UI/nut am thanh.png");
+    //soundIcon->setPosition(Vec2(center.x, 900));
+    //this->addChild(soundIcon);
 
-    auto sound = Sprite::create("image/Options UI/SOUND.png");
-    FigmaLayoutHelper::apply(sound, 100, 385, 200, 83);
-    sound->setScale(0.8f);
-    this->addChild(sound);
+    auto bgSound = Sprite::create("image/Options UI/BACKGROUND VOLUME.png");
+    FigmaLayoutHelper::apply(bgSound, 210, 385, 200, 83);
+    bgSound->setScale(0.65f);
+    this->addChild(bgSound);
 
-    auto material = Sprite::create("image/Options UI/MATERIAL.png");
-    FigmaLayoutHelper::apply(material, 125, 490, 200, 83);
-    material->setScale(0.8f);
-    this->addChild(material);
+    auto sfxSound = Sprite::create("image/Options UI/SFX VOLUME.png");
+    FigmaLayoutHelper::apply(sfxSound, 150, 610, 200, 83);
+    sfxSound->setScale(0.65f);
+    this->addChild(sfxSound);
 
-    auto volumeSlider = Slider::create();
-    volumeSlider->loadBarTexture("image/1 Player Mode/diff.png");
-    volumeSlider->loadSlidBallTextures("image/1 Player Mode/slide.png", "image/1 Player Mode/slide.png"); //dung tam thanh cua dificulty
-    volumeSlider->setScale(0.4f);
-    volumeSlider->setPosition(Vec2(560, 900));
-    this->addChild(volumeSlider);
+    auto MasterSound = Sprite::create("image/Options UI/MASTER VOLUME.png");
+    FigmaLayoutHelper::apply(MasterSound, 180, 835, 200, 83);
+    MasterSound->setScale(0.65f);
+    this->addChild(MasterSound);
 
-    // Gán âm lượng đã lưu (nếu có)
-    float savedVolume = UserDefault::getInstance()->getFloatForKey("bgmVolume", 1.0f); // mặc định 1.0
-    volumeSlider->setPercent(savedVolume * 100);
-    SoundManager::getInstance().setVolume(savedVolume);
+    // === Lấy âm lượng đã lưu hoặc mặc định ===
+    float bgm = UserDefault::getInstance()->getFloatForKey("bgmVolume", 1.0f);
+    float sfx = UserDefault::getInstance()->getFloatForKey("sfxVolume", 1.0f);
+    float master = UserDefault::getInstance()->getFloatForKey("masterVolume", 1.0f);
 
-    // Gắn sự kiện khi kéo slider để cập nhật âm lượng & lưu lại
-    volumeSlider->addEventListener([=](Ref* sender, Slider::EventType type) {
+    // --- BGM SLIDER ---
+    auto bgmSlider = Slider::create();
+    bgmSlider->loadBarTexture("image/1 Player Mode/diff.png");
+    bgmSlider->loadSlidBallTextures("image/1 Player Mode/slide.png", "image/1 Player Mode/slide.png");
+    bgmSlider->setPosition(Vec2(560, 900));
+    bgmSlider->setScale(0.4f);
+    float bgmVol = UserDefault::getInstance()->getFloatForKey("bgmVolume", 1.0f);
+    bgmSlider->setPercent(bgmVol * 100);
+    bgmSlider->addEventListener([=](Ref*, Slider::EventType type) {
         if (type == Slider::EventType::ON_PERCENTAGE_CHANGED) {
-            int percent = volumeSlider->getPercent();
-            float volume = percent / 100.0f;
-            SoundManager::getInstance().setVolume(volume);
-            UserDefault::getInstance()->setFloatForKey("bgmVolume", volume);
+            float vol = bgmSlider->getPercent() / 100.0f;
+            SoundManager::getInstance().setBGMVolume(vol);
         }
         });
+    this->addChild(bgmSlider);
 
-    //    auto slider = Slider::create();
-    //slider->loadBarTexture("image/1 Player Mode/diff.png");
-  //  slider->loadSlidBallTextures("image/1 Player Mode/slide.png", "image/1 Player Mode/slide.png");
-   // slider->setPercent(0);
-  //  slider->setPosition(Vec2(center.x + 120, 347));
-  //  slider->setScale(0.6f);
-  //  this->addChild(slider);
+    // --- SFX SLIDER ---
+    auto sfxSlider = Slider::create();
+    sfxSlider->loadBarTexture("image/1 Player Mode/diff.png");
+    sfxSlider->loadSlidBallTextures("image/1 Player Mode/slide.png", "image/1 Player Mode/slide.png");
+    sfxSlider->setPosition(Vec2(560, 675));
+    sfxSlider->setScale(0.4f);
+    float sfxVol = UserDefault::getInstance()->getFloatForKey("sfxVolume", 1.0f);
+    sfxSlider->setPercent(sfxVol * 100);
+    sfxSlider->addEventListener([=](Ref*, Slider::EventType type) {
+        if (type == Slider::EventType::ON_PERCENTAGE_CHANGED) {
+            float vol = sfxSlider->getPercent() / 100.0f;
+            SoundManager::getInstance().setSFXVolume(vol);
+        }
+        });
+    this->addChild(sfxSlider);
 
+    // --- MASTER VOLUME SLIDER ---
+    auto masterSlider = Slider::create();
+    masterSlider->loadBarTexture("image/1 Player Mode/diff.png");
+    masterSlider->loadSlidBallTextures("image/1 Player Mode/slide.png", "image/1 Player Mode/slide.png");
+    masterSlider->setPosition(Vec2(560, 450));
+    masterSlider->setScale(0.4f);
+    float masterVol = UserDefault::getInstance()->getFloatForKey("masterVolume", 1.0f);
+    masterSlider->setPercent(masterVol * 100);
+    masterSlider->addEventListener([=](Ref*, Slider::EventType type) {
+        if (type == Slider::EventType::ON_PERCENTAGE_CHANGED) {
+            float vol = masterSlider->getPercent() / 100.0f;
+            SoundManager::getInstance().setMasterVolume(vol);
+        }
+        });
+    this->addChild(masterSlider);
+
+    //test click sound
+    auto listener = EventListenerMouse::create();
+    listener->onMouseDown = [](EventMouse* event) {
+        SoundManager::getInstance().playClickSound();  // <-- gọi được bình thường
+        };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+  
 
 
 
